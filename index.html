@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Downloader</title>
+    <!-- MATERIAL ICON -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <!-- STYLING -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            text-decoration: none;
+            outline: none;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: coral;
+            --secondary-color: #fefefe;
+            --text-color: #444;
+            --bg-color: #fefefe;
+            --drop-shadow: 0 10px 30px rgba(0, 0, 0, .07);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .fill-text {
+            color: var(--primary-color);
+        }
+
+        .container {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+        }
+
+        form {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        form input {
+            padding: .8rem;
+            border: 1px solid #ddd;
+            border-radius: .2rem;
+            width: 100%;
+        }
+
+        form input:focus {
+            border-color: var(--primary-color);
+        }
+
+        ::placeholder {
+            color: var(--text-color);
+        }
+
+        .input-control {
+            width: 100%;
+            position: relative;
+        }
+
+        .input-control label {
+            font-size: 14px;
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--secondary-color);
+            padding: .1rem .3rem;
+            transition: all .2s ease-in-out;
+        }
+
+        .input-control input:focus+label,
+        .input-control input:valid+label {
+            top: 0;
+            left: 0.5rem;
+            font-size: 13px;
+        }
+
+        .input-control input.active {
+            top: 0;
+            left: 0.5rem;
+            font-size: 13px;
+        }
+
+        form button {
+            padding: .7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            font-size: 16px;
+            border: 0;
+            border-radius: .2rem;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            transition: .2s;
+        }
+
+        form button span {
+            color: var(--secondary-color);
+        }
+
+        form button:active {
+            transform: scale(.9);
+        }
+
+        /* form button.disable {
+            filter: brightness(85%);
+        } */
+
+        footer {
+            text-align: center;
+        }
+
+        footer img {
+            height: 30px;
+            background-color: var(--primary-color);
+            padding: .5rem;
+            border-radius: 50%;
+        }
+
+        footer h3 {
+            color: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>File <span class="fill-text">Downloader</span></h1>
+        <p>Paste URL of images, videos, or PDF to download...ASAP!</p>
+        <form action="#">
+            <div class="input-control">
+                <input type="url" name="input" id="input" required>
+                <label for="input">Paste URL here</label>
+            </div>
+            <button type="submit" class="disable">
+                <span>Download File</span>
+                <span class="material-symbols-outlined">download</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <img src="img/logo.png" alt="Developer_logo">
+        <h3>Gift Jacksun</h3>
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const downloadBtn = document.querySelector("button");
+        const inputField = document.querySelector("input");
+
+        downloadBtn.addEventListener('click', e => {
+            e.preventDefault();
+
+            fetchFile(inputField.value);
+            inputField.value = ""
+        })
+
+        function fetchFile(url) {
+            fetch(url).then(res => res.blob()).then(file => {
+                let tempUrl = URL.createObjectURL(file);
+                const aTag = document.createElement("a");
+                aTag.href = tempUrl;
+                aTag.download = url.replace(/^.*[\\\/]/, '');
+                document.body.appendChild(aTag);
+                aTag.click();
+                downloadBtn.innerText = "Downloading File";
+                URL.revokeObjectURL(tempUrl);
+                aTag.remove();
+            }).catch(() => {
+                alert("Failed to download file!");
+                // downloadBtn.innerText = "Download File";
+            });
+        }
+
+    </script>
+</body>
+
+</html>
